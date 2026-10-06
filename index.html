@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankAssist - Privacy-First Loan Eligibility Chatbot</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-layout">
+        <!-- Top Navigation Bar -->
+        <header class="app-header">
+            <div class="brand-container">
+                <div class="brand-logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 2L2 7h20L12 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title" id="brandTitle">TrustBank Credit Advisor</h1>
+                    <span class="brand-subtitle" id="brandSubtitle">Smart & Confidential Loan Eligibility Chatbot</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <!-- Language Selector -->
+                <div class="language-selector-wrapper">
+                    <div class="language-select-box">
+                        <span class="lang-globe-icon" aria-hidden="true">🌐</span>
+                        <label for="languageSelect" class="lang-select-label">Language:</label>
+                        <select id="languageSelect" class="language-dropdown" onchange="changeLanguage(this.value)" aria-label="Select language">
+                            <option value="en" selected>English</option>
+                            <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                            <option value="hi">हिन्दी (Hindi)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Privacy Status Badge -->
+                <div class="privacy-status-badge" title="All processing is temporary and session-scoped.">
+                    <span class="pulse-indicator"></span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <span id="storageBadgeText">Zero Storage Mode</span>
+                </div>
+
+                <!-- Clearly Visible "Clear My Data" Button -->
+                <button id="clearDataBtn" class="btn-clear-data" aria-label="Clear all entered applicant data and chat history">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        <line x1="10" y1="11" x2="10" y2="17"/>
+                        <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+                    <span id="clearDataBtnText">Clear My Data</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            <!-- Left Panel: Chatbot Interface -->
+            <section class="chat-section">
+                <!-- Official Privacy Notice Banner near the Chatbot -->
+                <div class="privacy-notice-banner" role="note" aria-label="Privacy Notice">
+                    <div class="notice-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                    <div class="notice-text" id="privacyNoticeText">
+                        <strong>Privacy Notice:</strong> Your information is used only for this preliminary loan eligibility assessment. We do not permanently store your personal or financial information.
+                    </div>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-card">
+                    <div class="chat-card-header">
+                        <div class="agent-profile">
+                            <div class="agent-avatar">AI</div>
+                            <div>
+                                <h2 class="agent-name" id="agentNameText">Loan Advisor Bot</h2>
+                                <p class="agent-status" id="agentStatusText">Online &bull; Ephemeral Session</p>
+                            </div>
+                        </div>
+                        <div class="header-right-badges">
+                            <div class="security-chip" id="securityChipText">
+                                🔒 Browser Memory Only
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Stream -->
+                    <div id="chatMessages" class="chat-messages" aria-live="polite">
+                        <!-- Messages dynamically appended here -->
+                    </div>
+
+                    <!-- Sensitive Information Interception Warning Alert (Hidden by default) -->
+                    <div id="sensitiveDataAlert" class="sensitive-data-alert" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                        </svg>
+                        <span id="sensitiveAlertText">Privacy Guard: Please do not enter Aadhaar, account numbers, cards, passwords, or OTPs. We only require estimates.</span>
+                    </div>
+
+                    <!-- Quick Suggestions / Choice Options -->
+                    <div id="quickOptions" class="quick-options-container">
+                        <!-- Dynamic option chips (e.g. Home Loan, Salaried) -->
+                    </div>
+
+                    <!-- Voice Listening Feedback Bar (Visual indicator for 🎤 Ready, 🔴 Listening, ⏳ Processing, ❌ Error) -->
+                    <div id="voiceListeningBar" class="voice-listening-bar state-ready" style="display: none;" role="status" aria-live="assertive">
+                        <div class="voice-status-indicator">
+                            <span id="voiceStatusIcon" class="voice-status-icon">🎤</span>
+                            <div class="voice-wave-anim" id="voiceWaveAnim" style="display: none;">
+                                <span class="voice-bar"></span>
+                                <span class="voice-bar"></span>
+                                <span class="voice-bar"></span>
+                                <span class="voice-bar"></span>
+                            </div>
+                            <span id="voiceStatusText" class="voice-status-text">Ready to listen</span>
+                        </div>
+                        <button type="button" class="btn-stop-listening" onclick="stopVoiceRecognition()" title="Stop voice input" aria-label="Stop voice input">✕</button>
+                    </div>
+
+                    <!-- Chat Input Area with Text and Microphone Input -->
+                    <form id="chatForm" class="chat-input-form" onsubmit="event.preventDefault(); handleUserSubmit();">
+                        <input 
+                            type="text" 
+                            id="userInput" 
+                            class="chat-input" 
+                            placeholder="Type your response or click mic to speak..." 
+                            autocomplete="off" 
+                            spellcheck="false"
+                            aria-label="Chat input message"
+                        />
+                        <!-- Microphone Voice Input Button (States: 🎤 Ready, 🔴 Listening, ⏳ Processing, ❌ Error) -->
+                        <button type="button" id="micBtn" class="btn-mic state-ready" title="🎤 Ready: Click to speak (Voice Input)" aria-label="Voice input: Ready" onclick="toggleVoiceRecognition()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </button>
+                        <button type="submit" id="sendBtn" class="btn-send" aria-label="Send message">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <div class="chat-footer-caption">
+                        <span id="footerCaptionText">🛡️ Processing is local & confidential. External AI services (if invoked) receive strictly anonymized estimates with zero personal identifiers.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Privacy Safeguards & Demo Profiles -->
+            <aside class="sidebar-section">
+                <!-- Quick Demo Profiles for Safe Demonstration -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        <h3>Sample Demo Profiles</h3>
+                    </div>
+                    <p class="sidebar-desc">Use pre-configured dummy data for safe demonstrations without disclosing any real personal details:</p>
+                    
+                    <div class="demo-buttons-list">
+                        <button class="demo-btn" onclick="loadDemoProfile('high_salaried')">
+                            <div class="demo-btn-title">👤 Salaried Professional</div>
+                            <div class="demo-btn-meta">Income: ₹85,000/mo | CIBIL: 780 | Home Loan</div>
+                        </button>
+                        
+                        <button class="demo-btn" onclick="loadDemoProfile('self_employed')">
+                            <div class="demo-btn-title">💼 Self-Employed Business</div>
+                            <div class="demo-btn-meta">Income: ₹1,50,000/mo | CIBIL: 730 | Auto Loan</div>
+                        </button>
+                        
+                        <button class="demo-btn" onclick="loadDemoProfile('high_debt')">
+                            <div class="demo-btn-title">⚠️ High DTI Applicant</div>
+                            <div class="demo-btn-meta">Income: ₹30,000/mo | EMIs: ₹18,000 | CIBIL: 630</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Privacy & Memory Inspector -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                            <line x1="6" y1="6" x2="6.01" y2="6"/>
+                            <line x1="6" y1="18" x2="6.01" y2="18"/>
+                        </svg>
+                        <h3>Live Privacy Inspector</h3>
+                    </div>
+                    <p class="sidebar-desc">Real-time verification of browser and storage privacy:</p>
+                    
+                    <div class="inspector-table">
+                        <div class="inspector-row">
+                            <span class="inspector-label">Permanent Disk Storage:</span>
+                            <span class="inspector-val val-safe" id="storageStatus">0 bytes (None)</span>
+                        </div>
+                        <div class="inspector-row">
+                            <span class="inspector-label">Session Memory State:</span>
+                            <span class="inspector-val" id="memoryStatus">Clean</span>
+                        </div>
+                        <div class="inspector-row">
+                            <span class="inspector-label">Aadhaar / Card Collection:</span>
+                            <span class="inspector-val val-safe">Strictly Blocked</span>
+                        </div>
+                        <div class="inspector-row">
+                            <span class="inspector-label">Console PII Logging:</span>
+                            <span class="inspector-val val-safe">Disabled (Zero Logs)</span>
+                        </div>
+                    </div>
+                    <button class="btn-secondary" onclick="runPrivacyAudit()">
+                        Verify Privacy Guarantee
+                    </button>
+                </div>
+
+                <!-- Eligibility Guidelines Card -->
+                <div class="sidebar-card info-card">
+                    <div class="sidebar-card-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="16" x2="12" y2="12"/>
+                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        <h3>Standard Eligibility Rules</h3>
+                    </div>
+                    <ul class="guidelines-list">
+                        <li><strong>DTI/FOIR:</strong> Total EMIs must stay within 40% - 50% of monthly income.</li>
+                        <li><strong>Credit Score:</strong> 750+ offers best interest rates and maximum sanction.</li>
+                        <li><strong>Min Income:</strong> ₹25,000/month for salaried applicants.</li>
+                        <li><strong>Max Tenure:</strong> Up to 30 years for Home Loans, 5-7 years for others.</li>
+                    </ul>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="toast" role="status" aria-live="assertive"></div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+</html>
